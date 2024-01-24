@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 
 def long_description() -> str:
-    with Path.open("README.md") as readme:
+    with Path.open(Path("README.md")) as readme:
         return readme.read()
 
 
