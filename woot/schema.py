@@ -415,6 +415,7 @@ class PublicContactCreateUpdatePayload:
 class PublicMessageCreatePayload:
     content: str | None = None
     echo_id: str | None = None
+    files: list[tuple[str, Any]] | None = None
 
 
 @dataclass
