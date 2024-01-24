@@ -7,7 +7,7 @@ import woot.schema as ws
 
 
 class WootAction:
-    def __getitem__(self: "WootAction", item: any) -> any:
+    def __getitem__(self: "WootAction", item: Any) -> Any:
         return getattr(self, item)
 
 

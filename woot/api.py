@@ -1,10 +1,75 @@
-""" Chatwoot API wrapper is here."""
+"""Chatwoot API wrapper is here."""
 
-from abc import abstractproperty
-from woot.simple_rest_client.api import API
+from typing import TYPE_CHECKING
 
 import woot.resources as wr
+from woot.simple_rest_client.api import API
 from woot.utils import get_account_name
+
+if TYPE_CHECKING:
+    from typing import Awaitable, Callable, Literal
+
+    from woot.simple_rest_client.models import Response
+
+    all_resource = Literal[
+        "account",
+        "account_users",
+        "agent_bots",
+        "users",
+        "account_agent_bot",
+        "agents",
+        "canned_responses",
+        "contacts",
+        "conversation_assignment",
+        "conversation_labels",
+        "conversations",
+        "custom_attributes",
+        "custom_filters",
+        "inbox",
+        "integrations",
+        "messages",
+        "profile",
+        "reports",
+        "teams",
+        "webhooks",
+        "automation_rule",
+        "client_contacts",
+        "client_conversations",
+        "client_messages",
+    ]
+
+    all_action = Literal[
+        "create",
+        "get",
+        "update",
+        "delete",
+        "get_sso_link",
+        "get_conversations",
+        "search",
+        "filter",
+        "assign",
+        "get_meta",
+        "toggle_status",
+        "get_associated_agent_bot",
+        "set_agent_bot",
+        "list_agents",
+        "delete_agent",
+        "add_agent",
+        "update_agent",
+        "create_attachment",
+        "get_accounts_report",
+        "get_account_report_summary",
+        "get_conversation_metrics_for_account",
+        "get_conversation_metrics_for_agent",
+    ]
+
+    class AllAction:
+        def __getattr__(self, _prop: all_action) -> Callable[..., Response]:
+            ...
+
+    class AsyncAllAction:
+        def __getattr__(self, _prop: all_action) -> Callable[..., Awaitable[Response]]:
+            ...
 
 
 class _BaseChatwoot:
@@ -23,7 +88,7 @@ class _BaseChatwoot:
         )
         self._add_resources()
 
-    def _add_resources(self):
+    def _add_resources(self) -> None:
         for resource in self.resources:
             resource = getattr(wr, resource)
             self._api.add_resource(
@@ -36,11 +101,7 @@ class _BaseChatwoot:
                 getattr(self._api, get_account_name(resource.__name__)),
             )  # because I want resources to be attributes of Chatwoot and AsyncChatwoot
 
-        @abstractproperty
-        def resources(self):
-            pass
-
-    def __repr__(self):
+    def __repr__(self) -> str:
         resource_names = [get_account_name(resource) for resource in self.resources]
         max_len = max([len(name) for name in resource_names]) + 2
         header = f"Available actions:\n{'-' * max_len}\n"
@@ -61,8 +122,18 @@ class Chatwoot(_BaseChatwoot):
     def resources(self):
         return wr._ALL_RESOURCES
 
+    if TYPE_CHECKING:
+
+        def __getattr__(self, _prop: all_resource) -> "AllAction":
+            ...
+
 
 class AsyncChatwoot(_BaseChatwoot):
     @property
     def resources(self):
         return wr._ALL_ASYNC_RESOURCES
+
+    if TYPE_CHECKING:
+
+        def __getattr__(self, _prop: all_resource) -> "AsyncAllAction":
+            ...
