@@ -1,6 +1,7 @@
-""" All actions for resources are defined here. """
+"""All actions for resources are defined here."""
 
-from typing import Any, Optional, Union, Type
+from typing import Any, Optional, Type, Union
+
 from pydantic.dataclasses import dataclass
 
 import woot.schema as ws
@@ -82,7 +83,9 @@ class AgentBotsActions:
 class UsersActions:
     list: Action = Action(method="GET", url="platform/api/v1/users")
     create: Action = Action(
-        method="POST", url="platform/api/v1/users/", schema_=ws.UserCreateUpdatePayload
+        method="POST",
+        url="platform/api/v1/users/",
+        schema_=ws.UserCreateUpdatePayload,
     )
     get: Action = Action(method="GET", url="platform/api/v1/users/{id}")
     update: Action = Action(
@@ -103,10 +106,12 @@ class AccountAgentBotActions:
         schema_=ws.AgentBotCreateUpdatePayload,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/agent_bots/{id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/agent_bots/{id}",
     )
     get: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/agent_bots/{id}"
+        method="GET",
+        url="api/v1/accounts/{account_id}/agent_bots/{id}",
     )
     update: Action = Action(
         method="PATCH",
@@ -129,14 +134,16 @@ class AgentsActions:
         schema_=ws.ApiV1AccountsAccountIdAgentsIdPatchRequest,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/agents/{id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/agents/{id}",
     )
 
 
 @dataclass
 class CannedResponsesActions:
     list: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/canned_responses"
+        method="GET",
+        url="api/v1/accounts/{account_id}/canned_responses",
     )
     create: Action = Action(
         method="POST",
@@ -144,7 +151,8 @@ class CannedResponsesActions:
         schema_=ws.CannedResponseCreateUpdatePayload,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/canned_responses/{id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/canned_responses/{id}",
     )
 
 
@@ -166,11 +174,13 @@ class ContactsActions:
         schema_=ws.ContactUpdate,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/contacts/{id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/contacts/{id}",
     )
     get: Action = Action(method="GET", url="api/v1/accounts/{account_id}/contacts/{id}")
     get_conversations: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/contacts/{id}/conversations"
+        method="GET",
+        url="api/v1/accounts/{account_id}/contacts/{id}/conversations",
     )
     search: Action = Action(
         method="GET",
@@ -310,10 +320,12 @@ class InboxActions:
         schema_=ws.ApiV1AccountsAccountIdInboxesIdPatchRequest,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/inboxes/{id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/inboxes/{id}",
     )
     get_associated_agent_bot: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/inboxes/{id}/agent_bot"
+        method="GET",
+        url="api/v1/accounts/{account_id}/inboxes/{id}/agent_bot",
     )
     set_agent_bot: Action = Action(
         method="POST",
@@ -321,7 +333,8 @@ class InboxActions:
         schema_=ws.ApiV1AccountsAccountIdInboxesIdSetAgentBotPostRequest,
     )
     list_agents: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/inbox_members/{inbox_id}"
+        method="GET",
+        url="api/v1/accounts/{account_id}/inbox_members/{inbox_id}",
     )
     delete_agent: Action = Action(
         method="DELETE",
@@ -343,7 +356,8 @@ class InboxActions:
 @dataclass
 class IntegrationsActions:
     list: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/integrations/apps"
+        method="GET",
+        url="api/v1/accounts/{account_id}/integrations/apps",
     )
     create: Action = Action(
         method="POST",
@@ -356,7 +370,8 @@ class IntegrationsActions:
         schema_=ws.IntegrationsHookUpdatePayload,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/integrations/hooks/{hook_id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/integrations/hooks/{hook_id}",
     )
 
 
@@ -420,7 +435,8 @@ class TeamsActions:
         schema_=ws.TeamCreateUpdatePayload,
     )
     get: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/teams/{team_id}"
+        method="GET",
+        url="api/v1/accounts/{account_id}/teams/{team_id}",
     )
     update: Action = Action(
         method="PATCH",
@@ -428,10 +444,12 @@ class TeamsActions:
         schema_=ws.TeamCreateUpdatePayload,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/teams/{team_id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/teams/{team_id}",
     )
     list_agents: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/teams/{team_id}/team_members"
+        method="GET",
+        url="api/v1/accounts/{account_id}/teams/{team_id}/team_members",
     )
     delete_agent: Action = Action(
         method="DELETE",
@@ -464,7 +482,8 @@ class WebhooksActions:
         schema_=ws.WebhookCreateUpdatePayload,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/webhooks/{webhook_id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/webhooks/{webhook_id}",
     )
 
 
@@ -481,7 +500,8 @@ class AutomationRuleActions:
         schema_=ws.AutomationRuleCreateUpdatePayload,
     )
     get: Action = Action(
-        method="GET", url="api/v1/accounts/{account_id}/automation_rules/{id}"
+        method="GET",
+        url="api/v1/accounts/{account_id}/automation_rules/{id}",
     )
     update: Action = Action(
         method="PATCH",
@@ -489,7 +509,8 @@ class AutomationRuleActions:
         schema_=ws.AutomationRuleCreateUpdatePayload,
     )
     delete: Action = Action(
-        method="DELETE", url="api/v1/accounts/{account_id}/automation_rules/{id}"
+        method="DELETE",
+        url="api/v1/accounts/{account_id}/automation_rules/{id}",
     )
 
 

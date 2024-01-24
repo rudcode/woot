@@ -1,43 +1,44 @@
-""" Schema for the action request body. Woot, woot. """
+"""Schema for the action request body. Woot, woot."""
 
 from __future__ import annotations
 
-from pydantic.dataclasses import dataclass, Field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, List
+
+from pydantic.dataclasses import Field, dataclass
 
 
 @dataclass
 class RequestError:
-    field: Optional[str] = None
-    message: Optional[str] = None
-    code: Optional[str] = None
+    field: str | None = None
+    message: str | None = None
+    code: str | None = None
 
 
 @dataclass
 class GenericId:
-    id: Optional[float] = None
+    id: float | None = None
 
 
 @dataclass
 class CannedResponse:
-    id: Optional[int] = None
-    content: Optional[str] = None
-    short_code: Optional[str] = None
-    account_id: Optional[int] = None
+    id: int | None = None
+    content: str | None = None
+    short_code: str | None = None
+    account_id: int | None = None
 
 
 @dataclass
 class CustomAttribute:
-    id: Optional[int] = None
-    attribute_display_name: Optional[str] = None
-    attribute_display_type: Optional[str] = None
-    attribute_description: Optional[str] = None
-    attribute_key: Optional[str] = None
-    attribute_values: Optional[str] = None
-    default_value: Optional[str] = None
-    attribute_model: Optional[str] = None
-    account_id: Optional[int] = None
+    id: int | None = None
+    attribute_display_name: str | None = None
+    attribute_display_type: str | None = None
+    attribute_description: str | None = None
+    attribute_key: str | None = None
+    attribute_values: str | None = None
+    default_value: str | None = None
+    attribute_model: str | None = None
+    account_id: int | None = None
 
 
 class EventName(Enum):
@@ -48,13 +49,13 @@ class EventName(Enum):
 
 @dataclass
 class AutomationRule:
-    event_name: Optional[EventName] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    active: Optional[bool] = None
-    actions: Optional[List[Dict[str, Any]]] = None
-    conditions: Optional[List[Dict[str, Any]]] = None
-    account_id: Optional[int] = None
+    event_name: EventName | None = None
+    name: str | None = None
+    description: str | None = None
+    active: bool | None = None
+    actions: list[dict[str, Any]] | None = None
+    conditions: list[dict[str, Any]] | None = None
+    account_id: int | None = None
 
 
 class Status(Enum):
@@ -79,15 +80,15 @@ class MessageType(Enum):
 
 @dataclass
 class Message:
-    content: Optional[str] = None
-    content_type: Optional[ContentType] = None
-    content_attributes: Optional[Dict[str, Any]] = None
-    message_type: Optional[MessageType] = None
-    created_at: Optional[int] = None
-    private: Optional[bool] = None
-    attachment: Optional[Dict[str, Any]] = None
-    sender: Optional[Dict[str, Any]] = None
-    conversation_id: Optional[float] = None
+    content: str | None = None
+    content_type: ContentType | None = None
+    content_attributes: dict[str, Any] | None = None
+    message_type: MessageType | None = None
+    created_at: int | None = None
+    private: bool | None = None
+    attachment: dict[str, Any] | None = None
+    sender: dict[str, Any] | None = None
+    conversation_id: float | None = None
 
 
 class Role(Enum):
@@ -103,56 +104,56 @@ class AvailabilityStatus(Enum):
 
 @dataclass
 class Agent:
-    id: Optional[int] = None
-    uid: Optional[str] = None
-    name: Optional[str] = None
-    available_name: Optional[str] = None
-    display_name: Optional[str] = None
-    email: Optional[str] = None
-    account_id: Optional[int] = None
-    role: Optional[Role] = None
-    confirmed: Optional[bool] = None
-    availability_status: Optional[AvailabilityStatus] = None
-    auto_offline: Optional[bool] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
+    id: int | None = None
+    uid: str | None = None
+    name: str | None = None
+    available_name: str | None = None
+    display_name: str | None = None
+    email: str | None = None
+    account_id: int | None = None
+    role: Role | None = None
+    confirmed: bool | None = None
+    availability_status: AvailabilityStatus | None = None
+    auto_offline: bool | None = None
+    custom_attributes: dict[str, Any] | None = None
 
 
 @dataclass
 class Inbox:
-    id: Optional[float] = None
-    name: Optional[str] = None
-    website_url: Optional[str] = None
-    channel_type: Optional[str] = None
-    avatar_url: Optional[str] = None
-    widget_color: Optional[str] = None
-    website_token: Optional[str] = None
-    enable_auto_assignment: Optional[bool] = None
-    web_widget_script: Optional[str] = None
-    welcome_title: Optional[str] = None
-    welcome_tagline: Optional[str] = None
-    greeting_enabled: Optional[bool] = None
-    greeting_message: Optional[str] = None
+    id: float | None = None
+    name: str | None = None
+    website_url: str | None = None
+    channel_type: str | None = None
+    avatar_url: str | None = None
+    widget_color: str | None = None
+    website_token: str | None = None
+    enable_auto_assignment: bool | None = None
+    web_widget_script: str | None = None
+    welcome_title: str | None = None
+    welcome_tagline: str | None = None
+    greeting_enabled: bool | None = None
+    greeting_message: str | None = None
 
 
 @dataclass
 class AgentBot:
-    id: Optional[float] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    account_id: Optional[float] = None
-    outgoing_url: Optional[str] = None
+    id: float | None = None
+    name: str | None = None
+    description: str | None = None
+    account_id: float | None = None
+    outgoing_url: str | None = None
 
 
 @dataclass
 class ContactInboxes:
-    source_id: Optional[str] = None
-    inbox: Optional[Inbox] = None
+    source_id: str | None = None
+    inbox: Inbox | None = None
 
 
 @dataclass
 class ContactableInboxes:
-    source_id: Optional[str] = None
-    inbox: Optional[Inbox] = None
+    source_id: str | None = None
+    inbox: Inbox | None = None
 
 
 class Type(Enum):
@@ -163,12 +164,12 @@ class Type(Enum):
 
 @dataclass
 class CustomFilter:
-    id: Optional[float] = None
-    name: Optional[str] = None
-    type: Optional[Type] = None
-    query: Optional[Dict[str, Any]] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
+    id: float | None = None
+    name: str | None = None
+    type: Type | None = None
+    query: dict[str, Any] | None = None
+    created_at: str | None = None
+    updated_at: str | None = None
 
 
 class Subscription(Enum):
@@ -182,10 +183,10 @@ class Subscription(Enum):
 
 @dataclass
 class Webhook:
-    id: Optional[float] = None
-    url: Optional[str] = None
-    subscriptions: Optional[List[Subscription]] = None
-    account_id: Optional[float] = None
+    id: float | None = None
+    url: str | None = None
+    subscriptions: list[Subscription] | None = None
+    account_id: float | None = None
 
 
 class Role2(Enum):
@@ -195,136 +196,136 @@ class Role2(Enum):
 
 @dataclass
 class Account:
-    id: Optional[float] = None
-    name: Optional[str] = None
-    role: Optional[Role2] = None
+    id: float | None = None
+    name: str | None = None
+    role: Role2 | None = None
 
 
 @dataclass
 class PlatformAccount:
-    id: Optional[float] = None
-    name: Optional[str] = None
+    id: float | None = None
+    name: str | None = None
 
 
 @dataclass
 class Team:
-    id: Optional[float] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    allow_auto_assign: Optional[bool] = None
-    account_id: Optional[float] = None
-    is_member: Optional[bool] = None
+    id: float | None = None
+    name: str | None = None
+    description: str | None = None
+    allow_auto_assign: bool | None = None
+    account_id: float | None = None
+    is_member: bool | None = None
 
 
 @dataclass
 class IntegrationsApp:
-    id: Optional[str] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    hook_type: Optional[str] = None
-    enabled: Optional[bool] = None
-    allow_multiple_hooks: Optional[bool] = None
-    hooks: Optional[List[Dict[str, Any]]] = None
+    id: str | None = None
+    name: str | None = None
+    description: str | None = None
+    hook_type: str | None = None
+    enabled: bool | None = None
+    allow_multiple_hooks: bool | None = None
+    hooks: list[dict[str, Any]] | None = None
 
 
 @dataclass
 class IntegrationsHook:
-    id: Optional[str] = None
-    app_id: Optional[str] = None
-    inbox_id: Optional[str] = None
-    account_id: Optional[str] = None
-    status: Optional[bool] = None
-    hook_type: Optional[bool] = None
-    settings: Optional[Dict[str, Any]] = None
+    id: str | None = None
+    app_id: str | None = None
+    inbox_id: str | None = None
+    account_id: str | None = None
+    status: bool | None = None
+    hook_type: bool | None = None
+    settings: dict[str, Any] | None = None
 
 
 @dataclass
 class PublicContact:
-    id: Optional[int] = None
-    source_id: Optional[str] = None
-    name: Optional[str] = None
-    email: Optional[str] = None
-    pubsub_token: Optional[str] = None
+    id: int | None = None
+    source_id: str | None = None
+    name: str | None = None
+    email: str | None = None
+    pubsub_token: str | None = None
 
 
 @dataclass
 class PublicConversation:
-    id: Optional[int] = None
-    inbox_id: Optional[str] = None
-    messages: Optional[List[Message]] = None
-    contact: Optional[Dict[str, Any]] = None
+    id: int | None = None
+    inbox_id: str | None = None
+    messages: list[Message] | None = None
+    contact: dict[str, Any] | None = None
 
 
 @dataclass
 class PublicMessage:
-    id: Optional[str] = None
-    content: Optional[str] = None
-    message_type: Optional[str] = None
-    content_type: Optional[str] = None
-    content_attributes: Optional[str] = None
-    created_at: Optional[str] = None
-    conversation_id: Optional[str] = None
-    attachments: Optional[List[Dict[str, Any]]] = None
-    sender: Optional[Dict[str, Any]] = None
+    id: str | None = None
+    content: str | None = None
+    message_type: str | None = None
+    content_type: str | None = None
+    content_attributes: str | None = None
+    created_at: str | None = None
+    conversation_id: str | None = None
+    attachments: list[dict[str, Any]] | None = None
+    sender: dict[str, Any] | None = None
 
 
 @dataclass
 class AccountCreateUpdatePayload:
-    name: Optional[str] = None
+    name: str | None = None
 
 
 @dataclass
 class AgentBotCreateUpdatePayload:
-    name: Optional[str] = None
-    description: Optional[str] = None
-    outgoing_url: Optional[str] = None
+    name: str | None = None
+    description: str | None = None
+    outgoing_url: str | None = None
 
 
 @dataclass
 class UserCreateUpdatePayload:
-    name: Optional[str] = None
-    email: Optional[str] = None
-    password: Optional[str] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
+    name: str | None = None
+    email: str | None = None
+    password: str | None = None
+    custom_attributes: dict[str, Any] | None = None
 
 
 @dataclass
 class CannedResponseCreateUpdatePayload:
-    content: Optional[str] = None
-    short_code: Optional[str] = None
+    content: str | None = None
+    short_code: str | None = None
 
 
 @dataclass
 class CustomAttributeCreateUpdatePayload:
-    attribute_display_name: Optional[str] = None
-    attribute_display_type: Optional[int] = None
-    attribute_description: Optional[str] = None
-    attribute_key: Optional[str] = None
-    attribute_values: Optional[List[str]] = None
-    attribute_model: Optional[int] = None
+    attribute_display_name: str | None = None
+    attribute_display_type: int | None = None
+    attribute_description: str | None = None
+    attribute_key: str | None = None
+    attribute_values: list[str] | None = None
+    attribute_model: int | None = None
 
 
 @dataclass
 class ContactCreate:
     inbox_id: float
-    name: Optional[str] = None
-    email: Optional[str] = None
-    phone_number: Optional[str] = None
-    avatar: Optional[bytes] = None
-    avatar_url: Optional[str] = None
-    identifier: Optional[str] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
+    name: str | None = None
+    email: str | None = None
+    phone_number: str | None = None
+    avatar: bytes | None = None
+    avatar_url: str | None = None
+    identifier: str | None = None
+    custom_attributes: dict[str, Any] | None = None
 
 
 @dataclass
 class ContactUpdate:
-    name: Optional[str] = None
-    email: Optional[str] = None
-    phone_number: Optional[str] = None
-    avatar: Optional[bytes] = None
-    avatar_url: Optional[str] = None
-    identifier: Optional[str] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
+    name: str | None = None
+    email: str | None = None
+    phone_number: str | None = None
+    avatar: bytes | None = None
+    avatar_url: str | None = None
+    identifier: str | None = None
+    custom_attributes: dict[str, Any] | None = None
 
 
 class MessageType1(Enum):
@@ -343,82 +344,82 @@ class ContentType1(Enum):
 @dataclass
 class ConversationMessageCreate:
     content: str
-    message_type: Optional[MessageType1] = None
-    private: Optional[bool] = None
-    content_type: Optional[ContentType1] = None
-    content_attributes: Optional[Dict[str, Any]] = None
+    message_type: MessageType1 | None = None
+    private: bool | None = None
+    content_type: ContentType1 | None = None
+    content_attributes: dict[str, Any] | None = None
 
 
 @dataclass
 class ConversationMessageAttachmentCreate:
     content: str
-    files: Optional[Dict[str, Union[str, Any]]] = None
-    message_type: Optional[MessageType1] = None
-    file_type: Optional[str] = None
+    files: dict[str, str | Any] | None = None
+    message_type: MessageType1 | None = None
+    file_type: str | None = None
 
 
 @dataclass
 class TeamCreateUpdatePayload:
-    name: Optional[str] = None
-    description: Optional[str] = None
-    allow_auto_assign: Optional[bool] = None
+    name: str | None = None
+    description: str | None = None
+    allow_auto_assign: bool | None = None
 
 
 @dataclass
 class CustomFilterCreateUpdatePayload:
-    name: Optional[str] = None
-    type: Optional[Type] = None
-    query: Optional[Dict[str, Any]] = None
+    name: str | None = None
+    type: Type | None = None
+    query: dict[str, Any] | None = None
 
 
 @dataclass
 class WebhookCreateUpdatePayload:
-    url: Optional[str] = None
-    subscriptions: Optional[List[Subscription]] = None
+    url: str | None = None
+    subscriptions: list[Subscription] | None = None
 
 
 @dataclass
 class IntegrationsHookCreatePayload:
-    app_id: Optional[str] = None
-    inbox_id: Optional[str] = None
-    settings: Optional[Dict[str, Any]] = None
+    app_id: str | None = None
+    inbox_id: str | None = None
+    settings: dict[str, Any] | None = None
 
 
 @dataclass
 class IntegrationsHookUpdatePayload:
-    settings: Optional[Dict[str, Any]] = None
+    settings: dict[str, Any] | None = None
 
 
 @dataclass
 class AutomationRuleCreateUpdatePayload:
-    name: Optional[str] = None
-    description: Optional[str] = None
-    event_name: Optional[EventName] = None
-    active: Optional[bool] = None
-    actions: Optional[List[Dict[str, Any]]] = None
-    conditions: Optional[List[Dict[str, Any]]] = None
+    name: str | None = None
+    description: str | None = None
+    event_name: EventName | None = None
+    active: bool | None = None
+    actions: list[dict[str, Any]] | None = None
+    conditions: list[dict[str, Any]] | None = None
 
 
 @dataclass
 class PublicContactCreateUpdatePayload:
-    identifier: Optional[str] = None
-    identifier_hash: Optional[str] = None
-    email: Optional[str] = None
-    name: Optional[str] = None
-    phone_number: Optional[str] = None
-    avatar_url: Optional[str] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
+    identifier: str | None = None
+    identifier_hash: str | None = None
+    email: str | None = None
+    name: str | None = None
+    phone_number: str | None = None
+    avatar_url: str | None = None
+    custom_attributes: dict[str, Any] | None = None
 
 
 @dataclass
 class PublicMessageCreatePayload:
-    content: Optional[str] = None
-    echo_id: Optional[str] = None
+    content: str | None = None
+    echo_id: str | None = None
 
 
 @dataclass
 class PublicMessageUpdatePayload:
-    submitted_values: Optional[Dict[str, Any]] = None
+    submitted_values: dict[str, Any] | None = None
 
 
 class AvailabilityStatus1(Enum):
@@ -428,18 +429,18 @@ class AvailabilityStatus1(Enum):
 
 @dataclass
 class Sender:
-    id: Optional[float] = None
-    name: Optional[str] = None
-    thumbnail: Optional[str] = None
-    channel: Optional[str] = None
+    id: float | None = None
+    name: str | None = None
+    thumbnail: str | None = None
+    channel: str | None = None
 
 
 @dataclass
 class Meta1:
-    mine_count: Optional[float] = None
-    unassigned_count: Optional[float] = None
-    assigned_count: Optional[float] = None
-    all_count: Optional[float] = None
+    mine_count: float | None = None
+    unassigned_count: float | None = None
+    assigned_count: float | None = None
+    all_count: float | None = None
 
 
 class CurrentStatus(Enum):
@@ -449,70 +450,70 @@ class CurrentStatus(Enum):
 
 @dataclass
 class Payload:
-    success: Optional[bool] = None
-    current_status: Optional[CurrentStatus] = None
-    conversation_id: Optional[float] = None
+    success: bool | None = None
+    current_status: CurrentStatus | None = None
+    conversation_id: float | None = None
 
 
 @dataclass
 class ConversationStatusToggle:
-    meta: Optional[Dict[str, Any]] = None
-    payload: Optional[Payload] = None
+    meta: dict[str, Any] | None = None
+    payload: Payload | None = None
 
 
 @dataclass
 class ConversationLabels:
-    payload: Optional[List[str]] = None
+    payload: list[str] | None = None
 
 
 @dataclass
 class ExtendedMessage(GenericId, Message):
-    source_id: Optional[float] = None
-    sender: Optional[Dict[str, Any]] = None
+    source_id: float | None = None
+    sender: dict[str, Any] | None = None
 
 
 @dataclass
 class Previous:
-    avg_first_response_time: Optional[str] = None
-    avg_resolution_time: Optional[str] = None
-    conversations_count: Optional[float] = None
-    incoming_messages_count: Optional[float] = None
-    outgoing_messages_count: Optional[float] = None
-    resolutions_count: Optional[float] = None
+    avg_first_response_time: str | None = None
+    avg_resolution_time: str | None = None
+    conversations_count: float | None = None
+    incoming_messages_count: float | None = None
+    outgoing_messages_count: float | None = None
+    resolutions_count: float | None = None
 
 
 @dataclass
 class AccountSummary:
-    avg_first_response_time: Optional[str] = None
-    avg_resolution_time: Optional[str] = None
-    conversations_count: Optional[float] = None
-    incoming_messages_count: Optional[float] = None
-    outgoing_messages_count: Optional[float] = None
-    resolutions_count: Optional[float] = None
-    previous: Optional[Previous] = None
+    avg_first_response_time: str | None = None
+    avg_resolution_time: str | None = None
+    conversations_count: float | None = None
+    incoming_messages_count: float | None = None
+    outgoing_messages_count: float | None = None
+    resolutions_count: float | None = None
+    previous: Previous | None = None
 
 
 @dataclass
 class Metric:
-    open: Optional[float] = None
-    unattended: Optional[float] = None
+    open: float | None = None
+    unattended: float | None = None
 
 
 @dataclass
 class AgentConversationMetrics:
-    id: Optional[float] = None
-    name: Optional[str] = None
-    email: Optional[str] = None
-    thumbnail: Optional[str] = None
-    availability: Optional[str] = None
-    metric: Optional[Metric] = None
+    id: float | None = None
+    name: str | None = None
+    email: str | None = None
+    thumbnail: str | None = None
+    availability: str | None = None
+    metric: Metric | None = None
 
 
 @dataclass
 class PlatformApiV1AccountsAccountIdAccountUsersGetResponse:
-    account_id: Optional[int] = None
-    user_id: Optional[int] = None
-    role: Optional[str] = None
+    account_id: int | None = None
+    user_id: int | None = None
+    role: str | None = None
 
 
 @dataclass
@@ -523,9 +524,9 @@ class PlatformApiV1AccountsAccountIdAccountUsersPostRequest:
 
 @dataclass
 class PlatformApiV1AccountsAccountIdAccountUsersPostResponse:
-    account_id: Optional[int] = None
-    user_id: Optional[int] = None
-    role: Optional[str] = None
+    account_id: int | None = None
+    user_id: int | None = None
+    role: str | None = None
 
 
 @dataclass
@@ -535,7 +536,7 @@ class PlatformApiV1AccountsAccountIdAccountUsersDeleteRequest:
 
 @dataclass
 class PlatformApiV1UsersIdLoginGetResponse:
-    url: Optional[str] = None
+    url: str | None = None
 
 
 class Role3(Enum):
@@ -554,8 +555,8 @@ class ApiV1AccountsAccountIdAgentsPostRequest:
     name: str
     email: str
     role: Role3
-    availability_status: Optional[AvailabilityStatus2] = None
-    auto_offline: Optional[bool] = None
+    availability_status: AvailabilityStatus2 | None = None
+    auto_offline: bool | None = None
 
 
 class Availability(Enum):
@@ -567,8 +568,8 @@ class Availability(Enum):
 @dataclass
 class ApiV1AccountsAccountIdAgentsIdPatchRequest:
     role: Role3
-    availability: Optional[Availability] = None
-    auto_offline: Optional[bool] = None
+    availability: Availability | None = None
+    auto_offline: bool | None = None
 
 
 class AttributeModel(Enum):
@@ -594,20 +595,20 @@ class Sort(Enum):
 
 @dataclass
 class ApiV1AccountsAccountIdContactsGetParametersQuery:
-    sort: Optional[Sort] = None
-    page: Optional[int] = 1
+    sort: Sort | None = None
+    page: int | None = 1
 
 
 @dataclass
 class ApiV1AccountsAccountIdContactsSearchGetParametersQuery:
-    q: Optional[str] = None
-    sort: Optional[Sort] = None
-    page: Optional[int] = 1
+    q: str | None = None
+    sort: Sort | None = None
+    page: int | None = 1
 
 
 @dataclass
 class ApiV1AccountsAccountIdContactsFilterPostParametersQuery:
-    page: Optional[int] = None
+    page: int | None = None
 
 
 class FilterOperator(Enum):
@@ -624,21 +625,21 @@ class QueryOperator(Enum):
 
 @dataclass
 class ApiV1AccountsAccountIdContactsFilterPostRequest:
-    attribute_key: Optional[str] = None
-    filter_operator: Optional[FilterOperator] = None
-    values: Optional[List[str]] = None
-    query_operator: Optional[QueryOperator] = None
+    attribute_key: str | None = None
+    filter_operator: FilterOperator | None = None
+    values: list[str] | None = None
+    query_operator: QueryOperator | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdContactsIdContactInboxesPostRequest:
     inbox_id: float
-    source_id: Optional[str] = None
+    source_id: str | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdAutomationRulesGetParametersQuery:
-    page: Optional[int] = 1
+    page: int | None = 1
 
 
 class Status1(Enum):
@@ -650,16 +651,16 @@ class Status1(Enum):
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsMetaGetParametersQuery:
-    q: Optional[str] = None
-    inbox_id: Optional[int] = None
-    team_id: Optional[int] = None
-    labels: Optional[List[str]] = None
-    status: Optional[Status1] = "open"
+    q: str | None = None
+    inbox_id: int | None = None
+    team_id: int | None = None
+    labels: list[str] | None = None
+    status: Status1 | None = "open"
 
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsMetaGetResponse:
-    meta: Optional[Meta1] = None
+    meta: Meta1 | None = None
 
 
 class AssigneeType(Enum):
@@ -671,13 +672,13 @@ class AssigneeType(Enum):
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsGetParametersQuery:
-    q: Optional[str] = None
-    inbox_id: Optional[int] = None
-    team_id: Optional[int] = None
-    labels: Optional[List[str]] = None
-    assignee_type: Optional[AssigneeType] = "all"
-    status: Optional[Status1] = "open"
-    page: Optional[int] = 1
+    q: str | None = None
+    inbox_id: int | None = None
+    team_id: int | None = None
+    labels: list[str] | None = None
+    assignee_type: AssigneeType | None = "all"
+    status: Status1 | None = "open"
+    page: int | None = 1
 
 
 class Status3(Enum):
@@ -688,34 +689,34 @@ class Status3(Enum):
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsPostRequest:
-    source_id: Optional[str] = None
-    inbox_id: Optional[str] = None
-    contact_id: Optional[str] = None
-    additional_attributes: Optional[Dict[str, Any]] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
-    status: Optional[Status3] = None
-    assignee_id: Optional[str] = None
-    team_id: Optional[str] = None
+    source_id: str | None = None
+    inbox_id: str | None = None
+    contact_id: str | None = None
+    additional_attributes: dict[str, Any] | None = None
+    custom_attributes: dict[str, Any] | None = None
+    status: Status3 | None = None
+    assignee_id: str | None = None
+    team_id: str | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsPostResponse:
-    id: Optional[float] = None
-    account_id: Optional[float] = None
-    inbox_id: Optional[float] = None
+    id: float | None = None
+    account_id: float | None = None
+    inbox_id: float | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsFilterPostParametersQuery:
-    page: Optional[int] = None
+    page: int | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsFilterPostRequest:
-    attribute_key: Optional[str] = None
-    filter_operator: Optional[FilterOperator] = None
-    values: Optional[List[str]] = None
-    query_operator: Optional[QueryOperator] = None
+    attribute_key: str | None = None
+    filter_operator: FilterOperator | None = None
+    values: list[str] | None = None
+    query_operator: QueryOperator | None = None
 
 
 @dataclass
@@ -725,13 +726,13 @@ class ApiV1AccountsAccountIdConversationsConversationIdToggleStatusPostRequest:
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsConversationIdAssignmentsPostRequest:
-    assignee_id: Optional[float] = None
-    team_id: Optional[float] = None
+    assignee_id: float | None = None
+    team_id: float | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsConversationIdLabelsPostRequest:
-    labels: Optional[List[str]] = None
+    labels: list[str] | None = None
 
 
 class Type2(Enum):
@@ -740,36 +741,36 @@ class Type2(Enum):
 
 @dataclass
 class Channel:
-    type: Optional[Type2] = None
-    website_url: Optional[str] = None
-    welcome_title: Optional[str] = None
-    welcome_tagline: Optional[str] = None
-    agent_away_message: Optional[str] = None
-    widget_color: Optional[str] = None
+    type: Type2 | None = None
+    website_url: str | None = None
+    welcome_title: str | None = None
+    welcome_tagline: str | None = None
+    agent_away_message: str | None = None
+    widget_color: str | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdInboxesPostRequest:
-    name: Optional[str] = None
-    avatar: Optional[bytes] = None
-    channel: Optional[Channel] = None
+    name: str | None = None
+    avatar: bytes | None = None
+    channel: Channel | None = None
 
 
 @dataclass
 class Channel1:
-    website_url: Optional[str] = None
-    welcome_title: Optional[str] = None
-    welcome_tagline: Optional[str] = None
-    agent_away_message: Optional[str] = None
-    widget_color: Optional[str] = None
+    website_url: str | None = None
+    welcome_title: str | None = None
+    welcome_tagline: str | None = None
+    agent_away_message: str | None = None
+    widget_color: str | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdInboxesIdPatchRequest:
     enable_auto_assignment: bool
-    name: Optional[str] = None
-    avatar: Optional[bytes] = None
-    channel: Optional[Channel1] = None
+    name: str | None = None
+    avatar: bytes | None = None
+    channel: Channel1 | None = None
 
 
 @dataclass
@@ -779,49 +780,51 @@ class ApiV1AccountsAccountIdInboxesIdSetAgentBotPostRequest:
 
 @dataclass
 class ApiV1AccountsAccountIdInboxMembersInboxIdDeleteRequest:
-    user_ids: List[int]
+    user_ids: list[int]
     inbox_id: str = Field(alias="inbox_id_")
 
 
 @dataclass
 class ApiV1AccountsAccountIdInboxMembersPostRequest:
     inbox_id: str
-    user_ids: List[int]
+    user_ids: list[int]
 
 
 @dataclass
 class ApiV1AccountsAccountIdInboxMembersPatchRequest:
     inbox_id: str
-    user_ids: List[int]
+    user_ids: list[int]
 
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsConversationIdMessagesGetResponse(
-    GenericId, Message
+    GenericId,
+    Message,
 ):
     pass
 
 
 @dataclass
 class ApiV1AccountsAccountIdConversationsConversationIdMessagesPostResponse(
-    GenericId, Message
+    GenericId,
+    Message,
 ):
     pass
 
 
 @dataclass
 class AccountsAccountIdTeamsTeamIdTeamMembersPostRequest:
-    user_ids: List[int]
+    user_ids: list[int]
 
 
 @dataclass
 class AccountsAccountIdTeamsTeamIdTeamMembersPatchRequest:
-    user_ids: List[int]
+    user_ids: list[int]
 
 
 @dataclass
 class AccountsAccountIdTeamsTeamIdTeamMembersDeleteRequest:
-    user_ids: List[int]
+    user_ids: list[int]
 
 
 class FilterType(Enum):
@@ -832,12 +835,12 @@ class FilterType(Enum):
 
 @dataclass
 class ApiV1AccountsAccountIdCustomFiltersGetParametersQuery:
-    filter_type: Optional[FilterType] = None
+    filter_type: FilterType | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdCustomFiltersPostParametersQuery:
-    filter_type: Optional[FilterType] = None
+    filter_type: FilterType | None = None
 
 
 class Metric1(Enum):
@@ -861,23 +864,23 @@ class Type3(Enum):
 class ApiV2AccountsAccountIdReportsGetParametersQuery:
     metric: Metric1
     type: Type3
-    id: Optional[str] = None
-    since: Optional[str] = None
-    until: Optional[str] = None
+    id: str | None = None
+    since: str | None = None
+    until: str | None = None
 
 
 @dataclass
 class ApiV2AccountsAccountIdReportsGetResponse:
-    value: Optional[str] = None
-    timestamp: Optional[float] = None
+    value: str | None = None
+    timestamp: float | None = None
 
 
 @dataclass
 class ApiV2AccountsAccountIdReportsSummaryGetParametersQuery:
     type: Type3
-    id: Optional[str] = None
-    since: Optional[str] = None
-    until: Optional[str] = None
+    id: str | None = None
+    since: str | None = None
+    until: str | None = None
 
 
 class Type5(Enum):
@@ -891,9 +894,9 @@ class ApiV2AccountsAccountIdReportsConversationsGetParametersQuery:
 
 @dataclass
 class ApiV2AccountsAccountIdReportsConversationsGetResponse:
-    open: Optional[float] = None
-    unattended: Optional[float] = None
-    unassigned: Optional[float] = None
+    open: float | None = None
+    unattended: float | None = None
+    unassigned: float | None = None
 
 
 class Type6(Enum):
@@ -903,60 +906,60 @@ class Type6(Enum):
 @dataclass
 class ApiV2AccountsAccountIdReportsConversationsGetParametersQuery1:
     type: Type6
-    user_id: Optional[str] = None
+    user_id: str | None = None
 
 
 @dataclass
 class BadRequestError:
-    description: Optional[str] = None
-    errors: Optional[List[RequestError]] = None
+    description: str | None = None
+    errors: list[RequestError] | None = None
 
 
 @dataclass
 class Contact:
-    email: Optional[str] = None
-    name: Optional[str] = None
-    phone_number: Optional[str] = None
-    thumbnail: Optional[str] = None
-    additional_attributes: Optional[Dict[str, Any]] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
-    contact_inboxes: Optional[List[ContactInboxes]] = None
+    email: str | None = None
+    name: str | None = None
+    phone_number: str | None = None
+    thumbnail: str | None = None
+    additional_attributes: dict[str, Any] | None = None
+    custom_attributes: dict[str, Any] | None = None
+    contact_inboxes: list[ContactInboxes] | None = None
 
 
 @dataclass
 class Conversation:
-    id: Optional[float] = None
-    messages: Optional[List[Message]] = None
-    account_id: Optional[float] = None
-    inbox_id: Optional[float] = None
-    status: Optional[Status] = None
-    timestamp: Optional[str] = None
-    contact_last_seen_at: Optional[str] = None
-    agent_last_seen_at: Optional[str] = None
-    unread_count: Optional[float] = None
-    additional_attributes: Optional[Dict[str, Any]] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
+    id: float | None = None
+    messages: list[Message] | None = None
+    account_id: float | None = None
+    inbox_id: float | None = None
+    status: Status | None = None
+    timestamp: str | None = None
+    contact_last_seen_at: str | None = None
+    agent_last_seen_at: str | None = None
+    unread_count: float | None = None
+    additional_attributes: dict[str, Any] | None = None
+    custom_attributes: dict[str, Any] | None = None
 
 
 @dataclass
 class User:
-    id: Optional[float] = None
-    uid: Optional[str] = None
-    name: Optional[str] = None
-    available_name: Optional[str] = None
-    display_name: Optional[str] = None
-    email: Optional[str] = None
-    account_id: Optional[float] = None
-    role: Optional[Role] = None
-    confirmed: Optional[bool] = None
-    custom_attributes: Optional[Dict[str, Any]] = None
-    accounts: Optional[List[Account]] = None
+    id: float | None = None
+    uid: str | None = None
+    name: str | None = None
+    available_name: str | None = None
+    display_name: str | None = None
+    email: str | None = None
+    account_id: float | None = None
+    role: Role | None = None
+    confirmed: bool | None = None
+    custom_attributes: dict[str, Any] | None = None
+    accounts: list[Account] | None = None
 
 
 @dataclass
 class ExtendedContact(Contact):
-    id: Optional[float] = None
-    availability_status: Optional[AvailabilityStatus1] = None
+    id: float | None = None
+    availability_status: AvailabilityStatus1 | None = None
 
 
 @dataclass
@@ -974,14 +977,14 @@ ContactList = List[ContactListItem]
 
 @dataclass
 class Meta:
-    sender: Optional[Sender] = None
-    assignee: Optional[User] = None
+    sender: Sender | None = None
+    assignee: User | None = None
 
 
 @dataclass
 class ContactConversation(Conversation):
-    meta: Optional[Meta] = None
-    display_id: Optional[float] = None
+    meta: Meta | None = None
+    display_id: float | None = None
 
 
 ContactConversations = List[ContactConversation]
@@ -989,37 +992,37 @@ ContactConversations = List[ContactConversation]
 
 @dataclass
 class Meta2:
-    sender: Optional[Sender] = None
-    assignee: Optional[User] = None
+    sender: Sender | None = None
+    assignee: User | None = None
 
 
 @dataclass
 class PayloadItem(GenericId, Conversation):
-    meta: Optional[Meta2] = None
+    meta: Meta2 | None = None
 
 
 @dataclass
 class Data:
-    meta: Optional[Meta1] = None
-    payload: Optional[List[PayloadItem]] = None
+    meta: Meta1 | None = None
+    payload: list[PayloadItem] | None = None
 
 
 @dataclass
 class ConversationList:
-    data: Optional[Data] = None
+    data: Data | None = None
 
 
 @dataclass
 class Meta3:
-    sender: Optional[Sender] = None
-    assignee: Optional[User] = None
+    sender: Sender | None = None
+    assignee: User | None = None
 
 
 @dataclass
 class ConversationShow(GenericId, Conversation):
-    meta: Optional[Meta3] = None
+    meta: Meta3 | None = None
 
 
 @dataclass
 class ApiV1AccountsAccountIdContactsSearchGetResponse:
-    payload: Optional[ContactList] = None
+    payload: ContactList | None = None

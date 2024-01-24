@@ -1,8 +1,10 @@
-from setuptools import setup, find_packages
+from pathlib import Path
+
+from setuptools import find_packages, setup
 
 
-def long_description():
-    with open("README.md") as readme:
+def long_description() -> str:
+    with Path.open("README.md") as readme:
         return readme.read()
 
 

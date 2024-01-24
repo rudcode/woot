@@ -1,61 +1,58 @@
-""" Resources for the simple_rest_client to work with chatwoot API.
+"""Resources for the simple_rest_client to work with chatwoot API.
 
 P.S. I'm proud of this one.
 """
-import re
 import pprint
-import httpx
-from httpx import URL
-from urllib.parse import unquote
-import functools
+import re
 from dataclasses import fields
 from types import MethodType
-from woot.simple_rest_client.resource import (
-    Resource,
-    BaseResource,
-    make_async_request,
-    Request,
-)
-from woot.simple_rest_client.exceptions import ActionURLMatchError
-from woot.utils import contains_bytes
+from urllib.parse import unquote
+
+import httpx
+from httpx import URL
 
 import woot.actions as a
-from woot.utils import update_signature, extract_path_params
+from woot.simple_rest_client.exceptions import ActionURLMatchError
+from woot.simple_rest_client.resource import (
+    BaseResource,
+    Request,
+    Resource,
+    make_async_request,
+)
+from woot.utils import contains_bytes, extract_path_params, update_signature
 
 
 class ActionMeta(type):
     def __new__(cls, name, bases, attrs, actions):
         attrs["default_actions"] = {v.name: v.default for v in fields(actions)}
-        new_class = super().__new__(cls, name, bases, attrs)
-        return new_class
+        return super().__new__(cls, name, bases, attrs)
 
 
 class WootResource(Resource):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        for action_name in self.actions.keys():
+        for action_name in self.actions:
             self.update_action(action_name)
 
-    def update_action(self, action_name):
+    def update_action(self, action_name) -> None:
         action_schema = self.actions[action_name].schema_
         action_query = self.actions[action_name].query
         url_params = extract_path_params(self.actions[action_name].url)
-        if action_schema is not None:
-            action_schema = action_schema.__dataclass_fields__
-        else:
-            action_schema = {}
-        if action_query is not None:
-            action_query = action_query.__dataclass_fields__
-        else:
-            action_query = {}
+        action_schema = (
+            action_schema.__dataclass_fields__ if action_schema is not None else {}
+        )
+        action_query = (
+            action_query.__dataclass_fields__ if action_query is not None else {}
+        )
 
         action_method = getattr(self, action_name)
 
         @update_signature(action_schema, action_name, url_params, action_query)
         def wrapped_action_method(self, *args, **kwargs):
             if len(args) > 0:
-                raise TypeError("Positional arguments are not allowed")
+                msg = "Positional arguments are not allowed"
+                raise TypeError(msg)
 
             schema_fields = action_schema.keys()
             query_params = action_query.keys()
@@ -68,7 +65,7 @@ class WootResource(Resource):
                 if k not in body and k not in parts and k not in query
             }
             self.actions[action_name].url = unquote(
-                str(URL(self.actions[action_name].url).copy_merge_params(params=query))
+                str(URL(self.actions[action_name].url).copy_merge_params(params=query)),
             )
 
             return action_method(
@@ -88,7 +85,8 @@ class WootResource(Resource):
             url = action["url"]
             url = re.sub(r"{\w+}", "{}", url).format(*parts)
         except IndexError:
-            raise ActionURLMatchError('No url match for "{}"'.format(action_name))
+            msg = f'No url match for "{action_name}"'
+            raise ActionURLMatchError(msg)
 
         if self.append_slash and not url.endswith("/"):
             url += "/"
@@ -98,10 +96,10 @@ class WootResource(Resource):
             url = url.replace("/", "", 1)
         return self.api_root_url + url
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         actions = self.actions
         resource_name = self.__class__.__name__ + " actions:"
-        max_action_len = max([len(action) for action in self.actions.keys()])
+        max_action_len = max([len(action) for action in self.actions])
         max_method_len = max([len(action.method) for action in self.actions.values()])
         max_url_len = max([len(action.url) for action in self.actions.values()])
         header_width = max_action_len + max_method_len + max_url_len + 7
@@ -116,16 +114,14 @@ class WootResource(Resource):
             )
             indent_const = max_action_len + max_method_len + 4
             if action.query:
-                if len(action.query.__annotations__) <= 1:
-                    special_indent_q = indent_const + 2
-                else:
-                    special_indent_q = 0
+                special_indent_q = (
+                    indent_const + 2 if len(action.query.__annotations__) <= 1 else 0
+                )
                 actions_str += f"\n{' ' * (indent_const)}Query parameters: \n{' ' * (special_indent_q)}{pprint.pformat(action.query.__annotations__, indent=indent_const + 2, compact=True, width=header_width)}"
             if action.schema_:
-                if len(action.schema_.__annotations__) <= 1:
-                    special_indent_p = indent_const + 2
-                else:
-                    special_indent_p = 0
+                special_indent_p = (
+                    indent_const + 2 if len(action.schema_.__annotations__) <= 1 else 0
+                )
                 actions_str += f"\n{' ' * (indent_const)}Body schema: \n{' ' * (special_indent_p)}{pprint.pformat(action.schema_.__annotations__, indent=indent_const + 2, compact=True, width=header_width)}"
             actions_str += "\n\n"
 
@@ -135,13 +131,13 @@ class WootResource(Resource):
 # unfortunately I need to copy-paste the whole class
 # because I need to re-create httpx client as its closed after each request
 class AsyncResource(BaseResource):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.client = httpx.AsyncClient(verify=self.ssl_verify)
-        for action_name in self.actions.keys():
+        for action_name in self.actions:
             self.add_action(action_name)
 
-    def add_action(self, action_name):
+    def add_action(self, action_name) -> None:
         async def action_method(
             self,
             *args,
@@ -163,7 +159,7 @@ class AsyncResource(BaseResource):
                 timeout=self.timeout,
                 kwargs=kwargs,
             )
-            
+
             request.params.update(self.params)
             request.headers.update(self.headers)
             if contains_bytes(request.body):
@@ -176,31 +172,30 @@ class AsyncResource(BaseResource):
 
 
 class AsyncWootResource(AsyncResource):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        for action_name in self.actions.keys():
+        for action_name in self.actions:
             self.update_action(action_name)
 
-    def update_action(self, action_name):
+    def update_action(self, action_name) -> None:
         action_schema = self.actions[action_name].schema_
         action_query = self.actions[action_name].query
         url_params = extract_path_params(self.actions[action_name].url)
-        if action_schema is not None:
-            action_schema = action_schema.__dataclass_fields__
-        else:
-            action_schema = {}
-        if action_query is not None:
-            action_query = action_query.__dataclass_fields__
-        else:
-            action_query = {}
+        action_schema = (
+            action_schema.__dataclass_fields__ if action_schema is not None else {}
+        )
+        action_query = (
+            action_query.__dataclass_fields__ if action_query is not None else {}
+        )
 
         action_method = getattr(self, action_name)
 
         @update_signature(action_schema, action_name, url_params, action_query)
         def wrapped_action_method(self, *args, **kwargs):
             if len(args) > 0:
-                raise TypeError("Positional arguments are not allowed")
+                msg = "Positional arguments are not allowed"
+                raise TypeError(msg)
 
             schema_fields = action_schema.keys()
             query_params = action_query.keys()
@@ -213,7 +208,7 @@ class AsyncWootResource(AsyncResource):
                 if k not in body and k not in parts and k not in query
             }
             self.actions[action_name].url = unquote(
-                str(URL(self.actions[action_name].url).copy_merge_params(params=query))
+                str(URL(self.actions[action_name].url).copy_merge_params(params=query)),
             )
 
             return action_method(
@@ -233,7 +228,8 @@ class AsyncWootResource(AsyncResource):
             url = action["url"]
             url = re.sub(r"{\w+}", "{}", url).format(*parts)
         except IndexError:
-            raise ActionURLMatchError('No url match for "{}"'.format(action_name))
+            msg = f'No url match for "{action_name}"'
+            raise ActionURLMatchError(msg)
 
         if self.append_slash and not url.endswith("/"):
             url += "/"
@@ -243,10 +239,10 @@ class AsyncWootResource(AsyncResource):
             url = url.replace("/", "", 1)
         return self.api_root_url + url
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         actions = self.actions
         resource_name = self.__class__.__name__ + " actions:"
-        max_action_len = max([len(action) for action in self.actions.keys()])
+        max_action_len = max([len(action) for action in self.actions])
         max_method_len = max([len(action.method) for action in self.actions.values()])
         max_url_len = max([len(action.url) for action in self.actions.values()])
         header_width = max_action_len + max_method_len + max_url_len + 7
@@ -261,16 +257,14 @@ class AsyncWootResource(AsyncResource):
             )
             indent_const = max_action_len + max_method_len + 4
             if action.query:
-                if len(action.query.__annotations__) <= 1:
-                    special_indent_q = indent_const + 2
-                else:
-                    special_indent_q = 0
+                special_indent_q = (
+                    indent_const + 2 if len(action.query.__annotations__) <= 1 else 0
+                )
                 actions_str += f"\n{' ' * (indent_const)}Query parameters: \n{' ' * (special_indent_q)}{pprint.pformat(action.query.__annotations__, indent=indent_const + 2, compact=True, width=header_width)}"
             if action.schema_:
-                if len(action.schema_.__annotations__) <= 1:
-                    special_indent_p = indent_const + 2
-                else:
-                    special_indent_p = 0
+                special_indent_p = (
+                    indent_const + 2 if len(action.schema_.__annotations__) <= 1 else 0
+                )
                 actions_str += f"\n{' ' * (indent_const)}Body schema: \n{' ' * (special_indent_p)}{pprint.pformat(action.schema_.__annotations__, indent=indent_const + 2, compact=True, width=header_width)}"
             actions_str += "\n\n"
 
@@ -282,7 +276,9 @@ class AccountResource(WootResource, metaclass=ActionMeta, actions=a.AccountActio
 
 
 class AccountUsersResource(
-    WootResource, metaclass=ActionMeta, actions=a.AccountUsersActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.AccountUsersActions,
 ):
     pass
 
@@ -296,7 +292,9 @@ class UsersResource(WootResource, metaclass=ActionMeta, actions=a.UsersActions):
 
 
 class AccountAgentBotResource(
-    WootResource, metaclass=ActionMeta, actions=a.AccountAgentBotActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.AccountAgentBotActions,
 ):
     pass
 
@@ -306,7 +304,9 @@ class AgentsResource(WootResource, metaclass=ActionMeta, actions=a.AgentsActions
 
 
 class CannedResponsesResource(
-    WootResource, metaclass=ActionMeta, actions=a.CannedResponsesActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.CannedResponsesActions,
 ):
     pass
 
@@ -316,31 +316,41 @@ class ContactsResource(WootResource, metaclass=ActionMeta, actions=a.ContactsAct
 
 
 class ConversationAssignmentResource(
-    WootResource, metaclass=ActionMeta, actions=a.ConversationAssignmentActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.ConversationAssignmentActions,
 ):
     pass
 
 
 class ConversationLabelsResource(
-    WootResource, metaclass=ActionMeta, actions=a.ConversationLabelsActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.ConversationLabelsActions,
 ):
     pass
 
 
 class ConversationsResource(
-    WootResource, metaclass=ActionMeta, actions=a.ConversationsActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.ConversationsActions,
 ):
     pass
 
 
 class CustomAttributesResource(
-    WootResource, metaclass=ActionMeta, actions=a.CustomAttributesActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.CustomAttributesActions,
 ):
     pass
 
 
 class CustomFiltersResource(
-    WootResource, metaclass=ActionMeta, actions=a.CustomFiltersActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.CustomFiltersActions,
 ):
     pass
 
@@ -350,7 +360,9 @@ class InboxResource(WootResource, metaclass=ActionMeta, actions=a.InboxActions):
 
 
 class IntegrationsResource(
-    WootResource, metaclass=ActionMeta, actions=a.IntegrationsActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.IntegrationsActions,
 ):
     pass
 
@@ -376,25 +388,33 @@ class WebhooksResource(WootResource, metaclass=ActionMeta, actions=a.WebhooksAct
 
 
 class AutomationRuleResource(
-    WootResource, metaclass=ActionMeta, actions=a.AutomationRuleActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.AutomationRuleActions,
 ):
     pass
 
 
 class ClientContactsResource(
-    WootResource, metaclass=ActionMeta, actions=a.ClientContactsActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.ClientContactsActions,
 ):
     pass
 
 
 class ClientConversationsResource(
-    WootResource, metaclass=ActionMeta, actions=a.ClientConversationsActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.ClientConversationsActions,
 ):
     pass
 
 
 class ClientMessagesResource(
-    WootResource, metaclass=ActionMeta, actions=a.ClientMessagesActions
+    WootResource,
+    metaclass=ActionMeta,
+    actions=a.ClientMessagesActions,
 ):
     pass
 
@@ -403,145 +423,193 @@ class ClientMessagesResource(
 
 
 class AsyncAccountResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.AccountActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.AccountActions,
 ):
     pass
 
 
 class AsyncAccountUsersResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.AccountUsersActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.AccountUsersActions,
 ):
     pass
 
 
 class AsyncAgentBotsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.AgentBotsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.AgentBotsActions,
 ):
     pass
 
 
 class AsyncUsersResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.UsersActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.UsersActions,
 ):
     pass
 
 
 class AsyncAccountAgentBotResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.AccountAgentBotActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.AccountAgentBotActions,
 ):
     pass
 
 
 class AsyncAgentsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.AgentsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.AgentsActions,
 ):
     pass
 
 
 class AsyncCannedResponsesResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.CannedResponsesActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.CannedResponsesActions,
 ):
     pass
 
 
 class AsyncContactsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ContactsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ContactsActions,
 ):
     pass
 
 
 class AsyncConversationAssignmentResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ConversationAssignmentActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ConversationAssignmentActions,
 ):
     pass
 
 
 class AsyncConversationLabelsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ConversationLabelsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ConversationLabelsActions,
 ):
     pass
 
 
 class AsyncConversationsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ConversationsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ConversationsActions,
 ):
     pass
 
 
 class AsyncCustomAttributesResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.CustomAttributesActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.CustomAttributesActions,
 ):
     pass
 
 
 class AsyncCustomFiltersResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.CustomFiltersActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.CustomFiltersActions,
 ):
     pass
 
 
 class AsyncInboxResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.InboxActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.InboxActions,
 ):
     pass
 
 
 class AsyncIntegrationsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.IntegrationsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.IntegrationsActions,
 ):
     pass
 
 
 class AsyncMessagesResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.MessagesActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.MessagesActions,
 ):
     pass
 
 
 class AsyncProfileResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ProfileActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ProfileActions,
 ):
     pass
 
 
 class AsyncReportsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ReportsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ReportsActions,
 ):
     pass
 
 
 class AsyncTeamsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.TeamsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.TeamsActions,
 ):
     pass
 
 
 class AsyncWebhooksResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.WebhooksActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.WebhooksActions,
 ):
     pass
 
 
 class AsyncAutomationRuleResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.AutomationRuleActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.AutomationRuleActions,
 ):
     pass
 
 
 class AsyncClientContactsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ClientContactsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ClientContactsActions,
 ):
     pass
 
 
 class AsyncClientConversationsResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ClientConversationsActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ClientConversationsActions,
 ):
     pass
 
 
 class AsyncClientMessagesResource(
-    AsyncWootResource, metaclass=ActionMeta, actions=a.ClientMessagesActions
+    AsyncWootResource,
+    metaclass=ActionMeta,
+    actions=a.ClientMessagesActions,
 ):
     pass
 
@@ -555,7 +623,7 @@ _ALL_RESOURCES = [
             isinstance(v, ActionMeta),
             not k.startswith("Async"),
             k not in ("Resource", "AsyncResource", "WootResource", "AsyncWootResource"),
-        ]
+        ],
     )
 ]
 
@@ -567,6 +635,6 @@ _ALL_ASYNC_RESOURCES = [
             "Resource" in k,
             k.startswith("Async"),
             k not in ("Resource", "AsyncResource", "WootResource", "AsyncWootResource"),
-        ]
+        ],
     )
 ]
