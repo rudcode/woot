@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any, List
 
@@ -781,7 +781,7 @@ class ApiV1AccountsAccountIdInboxesIdSetAgentBotPostRequest:
 @dataclass
 class ApiV1AccountsAccountIdInboxMembersInboxIdDeleteRequest:
     user_ids: list[int]
-    inbox_id: str = field(alias="inbox_id_")
+    inbox_id: str
 
 
 @dataclass
