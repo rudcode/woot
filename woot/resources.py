@@ -147,7 +147,6 @@ class AsyncResource(BaseResource):
             action_name=action_name,
             **kwargs,
         ):
-            self.client = httpx.AsyncClient(verify=self.ssl_verify)
             url = self.get_action_full_url(action_name, *args)
             method = self.get_action_method(action_name)
             request = Request(
@@ -165,8 +164,7 @@ class AsyncResource(BaseResource):
             if contains_bytes(request.body):
                 add_headers = {"Content-Type": "multipart/form-data"}
                 request.headers.update(add_headers)
-            async with self.client as client:
-                return await make_async_request(client, request)
+            return await make_async_request(self.client, request)
 
         setattr(self, action_name, MethodType(action_method, self))
 
