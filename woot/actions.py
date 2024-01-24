@@ -480,7 +480,7 @@ class InboxActions:
     delete_agent: Action = field(
         default=Action(
             method="DELETE",
-            url="api/v1/accounts/{account_id}/inbox_members/{inbox_id}",
+            url="api/v1/accounts/{account_id}/inbox_members",
             schema_=ws.ApiV1AccountsAccountIdInboxMembersInboxIdDeleteRequest,
         ),
     )
