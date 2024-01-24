@@ -35,6 +35,5 @@ setup(
         "python-slugify",
         "httpx",
         "python-status",
-        "pydantic",
     ],
 )

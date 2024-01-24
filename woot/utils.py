@@ -1,12 +1,9 @@
-""" Handy utilities for woot. """
-import re
-import pprint
-import functools
+"""Handy utilities for woot."""
 import inspect
-from pydantic.dataclasses import Field
+import re
 
 
-def contains_bytes(data):
+def contains_bytes(data: any) -> bool:
     if isinstance(data, dict):
         for value in data.values():
             if contains_bytes(value):
@@ -21,18 +18,18 @@ def contains_bytes(data):
     return False
 
 
-def extract_path_params(path_string):
+def extract_path_params(path_string: str) -> str:
     return re.findall(r"\{([^}]*)\}", path_string)
 
 
 def get_account_name(class_name: str) -> str:
     """Get account name from class name."""
     return split_by_uppercase(
-        class_name.replace("Resource", "").replace("Async", "")
+        class_name.replace("Resource", "").replace("Async", ""),
     ).lower()
 
 
-def split_by_uppercase(input_str):
+def split_by_uppercase(input_str: str) -> str:
     parts = re.findall("[A-Z][^A-Z]*", input_str)
     return "_".join(parts)
 
