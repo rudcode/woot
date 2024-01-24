@@ -247,6 +247,7 @@ class ConversationsActions:
     toggle_status: Action = Action(
         method="POST",
         url="api/v1/accounts/{account_id}/conversations/{conversation_id}/toggle_status",
+        schema_=ws.ApiV1AccountsAccountIdConversationsConversationIdToggleStatusPostRequest,
     )
 
 
